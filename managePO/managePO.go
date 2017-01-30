@@ -48,6 +48,7 @@ type PO struct{							// Attributes of a PO
 	Buyer_sign string `json:"buyer_sign"`
 	Seller_sign string `json:"seller_sign"`
 }
+var EVENT_COUNTER = "event_counter"
 // ============================================================================================================================
 // Main - start the chaincode for PO management
 // ============================================================================================================================
@@ -83,6 +84,11 @@ func (t *ManagePO) Init(stub shim.ChaincodeStubInterface, function string, args 
 		return nil, err
 	}
 	
+	err = stub.PutState(EVENT_COUNTER, []byte(" "))
+	if err != nil {
+		return nil, err
+	}
+
 	return nil, nil
 }
 // ============================================================================================================================
@@ -521,6 +527,12 @@ func (t *ManagePO) create_po(stub shim.ChaincodeStubInterface, args []string) ([
 	if err != nil {
 		return nil, err
 	}
+
+	tosend := "{ \"transID\" : \""+transId+"\", \"message\" : \"PO created succcessfully\", \"code\" : \"200\"}"
+    err = stub.SetEvent("evtsender", []byte(tosend))
+    if err != nil {
+    	return nil, err
+    } 
 
 	fmt.Println("end create_po")
 	return nil, nil
