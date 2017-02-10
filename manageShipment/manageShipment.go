@@ -33,11 +33,11 @@ type ManageShipment struct {
 }
 
 var ShipmentIndexStr = "_Shipmentindex"				//name for the key/value that will store a list of all known Shipment
-var FraudListIndexStr = "_FraudListIndexStr"
 
 type Shipment struct{							// Attributes of a Shipment 
 	ShipmentID string `json:"shipmentId"`	
 	TransID string `json:"transId"`
+	AgreementID string `json:"agreementId"`
 	Shipment_status string `json:"shipment_status"`
 	Source string `json:"source"`					
 	Destination string `json:"destination"`
@@ -45,11 +45,7 @@ type Shipment struct{							// Attributes of a Shipment
 	Shipment_date string `json:"shipment_date"`
 	ShipperName string `json:"shipper_name"`
 	
-}/*
-type Fraud_list struct{
-	FraudID string `json:"fraudId"`	
-	FraudName string `json:"fraudName"`
-}*/
+}
 // ============================================================================================================================
 // Main - start the chaincode for Shipment management
 // ============================================================================================================================
@@ -89,13 +85,6 @@ func (t *ManageShipment) Init(stub shim.ChaincodeStubInterface, function string,
 	if err != nil {
 		return nil, err
 	}
-
-	/*var frauds []string
-	fraudListAsBytes, _ := json.Marshal(frauds)								//marshal an emtpy array of strings to clear the index
-	err = stub.PutState(FraudListIndexStr, fraudListAsBytes)
-	if err != nil {
-		return nil, err
-	}*/
 
 	tosend := "{ \"message\" : \"ManageShipment chaincode is deployed successfully.\", \"code\" : \"200\"}"
 	err = stub.SetEvent("evtsender", []byte(tosend))
@@ -443,8 +432,8 @@ func (t *ManageShipment) update_shipment(stub shim.ChaincodeStubInterface, args 
 	var jsonResp string
 	var err error
 	fmt.Println("Updating Shipment")
-	if len(args) != 8{
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 8 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 9{
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 9 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -467,12 +456,13 @@ func (t *ManageShipment) update_shipment(stub shim.ChaincodeStubInterface, args 
 		fmt.Println(res);
 
 		res.TransID = args[1]
-		res.Shipment_status = args[2]
-		res.Source = args[3]
-		res.Destination = args[4]
-		res.ActualDelivery_date = args[5]
-		res.Shipment_date = args[6]
-		res.ShipperName	= args[7]
+		res.AgreementID = args[2]
+		res.Shipment_status = args[3]
+		res.Source = args[4]
+		res.Destination = args[5]
+		res.ActualDelivery_date = args[6]
+		res.Shipment_date = args[7]
+		res.ShipperName	= args[8]
 		
 	}else{
 		errMsg := "{ \"message\" : \""+ shipmentId+ " Not Found.\", \"code\" : \"503\"}"
@@ -487,6 +477,7 @@ func (t *ManageShipment) update_shipment(stub shim.ChaincodeStubInterface, args 
 	input := 	`{`+
 		`"shipmentId": "` + res.ShipmentID + `" , `+
 		`"transId": "` + res.TransID + `" , `+ 
+		`"agreementId": "` + res.AgreementID + `" , `+ 
 		`"shipment_status": "` + res.Shipment_status + `" , `+ 
 		`"source": "` + res.Source + `" , `+
 		`"destination": "` + res.Destination + `" , `+
@@ -511,8 +502,8 @@ func (t *ManageShipment) update_shipment(stub shim.ChaincodeStubInterface, args 
 // ============================================================================================================================
 func (t *ManageShipment) create_shipment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 8{
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 8 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 9{
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 9 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -523,12 +514,13 @@ func (t *ManageShipment) create_shipment(stub shim.ChaincodeStubInterface, args 
 		
 		shipmentId := args[0]
 		transId := args[1]
-		shipment_status := args[2]
-		source := args[3]
-		destination := args[4]
-		actualDelivery_date := args[5]
-		shipment_date := args[6]
-		shipper_name	:= args[7]
+		agreementId := args[2]
+		shipment_status := args[3]
+		source := args[4]
+		destination := args[5]
+		actualDelivery_date := args[6]
+		shipment_date := args[7]
+		shipper_name	:= args[8]
 		
 		shipmentAsBytes, err := stub.GetState(shipmentId)
 		if err != nil {
@@ -554,6 +546,7 @@ func (t *ManageShipment) create_shipment(stub shim.ChaincodeStubInterface, args 
 	input := 	`{`+
 		`"shipmentId": "` + shipmentId + `" , `+
 		`"transId": "` + transId + `" , `+ 
+		`"agreementId": "` + agreementId + `" , `+ 
 		`"shipment_status": "` + shipment_status + `" , `+ 
 		`"source": "` + source + `" , `+
 		`"destination": "` + destination + `" , `+
