@@ -41,7 +41,6 @@ type Shipment struct{							// Attributes of a Shipment
 	Shipment_status string `json:"shipment_status"`
 	Source string `json:"source"`					
 	Destination string `json:"destination"`
-	Deadline_date string `json:"deadline_date"`
 	ActualDelivery_date string `json:"actualDelivery_date"`
 	Shipment_date string `json:"shipment_date"`
 	ShipperName string `json:"shipper_name"`
@@ -444,8 +443,8 @@ func (t *ManageShipment) update_shipment(stub shim.ChaincodeStubInterface, args 
 	var jsonResp string
 	var err error
 	fmt.Println("Updating Shipment")
-	if len(args) != 9{
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 9 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 8{
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 8 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -471,10 +470,9 @@ func (t *ManageShipment) update_shipment(stub shim.ChaincodeStubInterface, args 
 		res.Shipment_status = args[2]
 		res.Source = args[3]
 		res.Destination = args[4]
-		res.Deadline_date = args[5]
-		res.ActualDelivery_date = args[6]
-		res.Shipment_date = args[7]
-		res.ShipperName	= args[8]
+		res.ActualDelivery_date = args[5]
+		res.Shipment_date = args[6]
+		res.ShipperName	= args[7]
 		
 	}else{
 		errMsg := "{ \"message\" : \""+ shipmentId+ " Not Found.\", \"code\" : \"503\"}"
@@ -492,7 +490,6 @@ func (t *ManageShipment) update_shipment(stub shim.ChaincodeStubInterface, args 
 		`"shipment_status": "` + res.Shipment_status + `" , `+ 
 		`"source": "` + res.Source + `" , `+
 		`"destination": "` + res.Destination + `" , `+
-		`"deadline_date": "` + res.Deadline_date + `" , `+ 
 		`"actualDelivery_date": "` + res.ActualDelivery_date + `" , `+ 
 		`"shipment_date": "` + res.Shipment_date + `" , `+ 
 		`"shipper_name": "` + res.ShipperName + `" `+ 
@@ -514,8 +511,8 @@ func (t *ManageShipment) update_shipment(stub shim.ChaincodeStubInterface, args 
 // ============================================================================================================================
 func (t *ManageShipment) create_shipment(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 9 {
-		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 9 arguments.\", \"code\" : \"503\"}"
+	if len(args) != 8{
+		errMsg := "{ \"message\" : \"Incorrect number of arguments. Expecting 8 arguments.\", \"code\" : \"503\"}"
 		err = stub.SetEvent("errEvent", []byte(errMsg))
 		if err != nil {
 			return nil, err
@@ -529,10 +526,9 @@ func (t *ManageShipment) create_shipment(stub shim.ChaincodeStubInterface, args 
 		shipment_status := args[2]
 		source := args[3]
 		destination := args[4]
-		deadline_date := args[5]
-		actualDelivery_date := args[6]
-		shipment_date := args[7]
-		shipper_name	:= args[8]
+		actualDelivery_date := args[5]
+		shipment_date := args[6]
+		shipper_name	:= args[7]
 		
 		shipmentAsBytes, err := stub.GetState(shipmentId)
 		if err != nil {
@@ -561,7 +557,6 @@ func (t *ManageShipment) create_shipment(stub shim.ChaincodeStubInterface, args 
 		`"shipment_status": "` + shipment_status + `" , `+ 
 		`"source": "` + source + `" , `+
 		`"destination": "` + destination + `" , `+
-		`"deadline_date": "` + deadline_date + `" , `+ 
 		`"actualDelivery_date": "` + actualDelivery_date + `" , `+ 
 		`"shipment_date": "` + shipment_date + `" , `+ 
 		`"shipper_name": "` + shipper_name + `" `+ 
